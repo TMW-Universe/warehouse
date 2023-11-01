@@ -26,6 +26,7 @@ export class WarehouseSettingsModule {
 
             // Store PUB and PRIV keys along with their API keys
             return {
+              warehouse: name,
               apiKeys,
               publicKey,
               privateKey,
