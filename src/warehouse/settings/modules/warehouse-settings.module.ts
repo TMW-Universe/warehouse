@@ -1,36 +1,38 @@
-import { Logger, Module } from '@nestjs/common';
-import { readFileSync } from 'fs';
-import { ApiKeysModule } from 'nestjs-api-keys';
-import { ApiPermissions } from 'src/utils/types/permissions/api-permissions.enum';
+import { DynamicModule, Global, Logger, Module } from '@nestjs/common';
+import { readGlobalWarehouseSettings } from '../utils/read-global-warehouse-settings.util';
+import { readWarehouseKey } from '../utils/read-warehouse-key.util';
+import { readWarehouseSettings } from '../utils/read-warehouse-settings.util';
 
-@Module({
-  imports: [
-    ApiKeysModule.registerAsync(async () => {
-      // Read global settings file
-      const { warehouses } = JSON.parse(
-        readFileSync('/config/settings.json', 'utf-8'),
-      ) as { warehouses: { name: string }[] };
+export const WAREHOUSE_SETTINGS_PROVIDER = 'WAREHOUSE_SETTINGS_PROVIDER';
 
-      return {
-        apiKeys: warehouses.map(({ name }) => {
-          // Read warehouse settings file
-          const { apiKeys: keys } = JSON.parse(
-            readFileSync(`/config/${name}/settings.json`, 'utf-8'),
-          ) as { apiKeys: string[] };
+@Global()
+@Module({})
+export class WarehouseSettingsModule {
+  static register(): DynamicModule {
+    const { warehouses } = readGlobalWarehouseSettings();
 
-          Logger.log(
-            `Loaded '${name}' warehouse settings`,
-            'Warehouse settings',
-          );
+    return {
+      module: WarehouseSettingsModule,
+      providers: [
+        {
+          provide: WAREHOUSE_SETTINGS_PROVIDER,
+          useValue: warehouses.map(({ name }) => {
+            const { apiKeys } = readWarehouseSettings(name);
 
-          return {
-            name,
-            keys,
-            permissions: [ApiPermissions.READ_FILE],
-          };
-        }),
-      };
-    }),
-  ],
-})
-export class WarehouseSettingsModule {}
+            const publicKey = readWarehouseKey(name, 'public');
+            const privateKey = readWarehouseKey(name, 'private');
+
+            Logger.log(`Loaded '${name}'`, 'Warehouse keys');
+
+            // Store PUB and PRIV keys along with their API keys
+            return {
+              apiKeys,
+              publicKey,
+              privateKey,
+            };
+          }),
+        },
+      ],
+    };
+  }
+}
