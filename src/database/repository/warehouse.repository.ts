@@ -5,7 +5,7 @@ import { PrismaService } from '../client/prisma.service';
 export class WarehouseRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findFileById(fileId: string) {
+  async findFileMetadataById(fileId: string) {
     return await this.prisma.file.findUnique({
       where: {
         id: fileId,
