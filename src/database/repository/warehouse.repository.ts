@@ -20,4 +20,8 @@ export class WarehouseRepository {
       },
     });
   }
+
+  async findAllWarehouses() {
+    return await this.prisma.warehouse.findMany();
+  }
 }

@@ -11,6 +11,7 @@ services:
     ports:
       - '6001:6001'
     volumes:
+      - '${CONFIG_PATH}:/config'
       - ./src:/app/src
     expose:
       - '6000'

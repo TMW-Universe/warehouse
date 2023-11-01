@@ -1,12 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { WarehouseService } from './warehouse.service';
+import { ApiKeyGuard } from 'nestjs-api-keys';
+import { ApiPermissions } from 'src/utils/types/permissions/api-permissions.enum';
 
 @Controller('warehouse')
 export class WarehouseController {
   constructor(private readonly warehouseService: WarehouseService) {}
 
-  @Get(':name/image')
-  async getImageById() {
+  @UseGuards(ApiKeyGuard({ permissions: [ApiPermissions.READ_FILE] }))
+  @Get(':name/file')
+  async getFileById() {
     return await this.warehouseService.getFileMetadataById('0');
   }
 }
