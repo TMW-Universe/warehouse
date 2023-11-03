@@ -3,6 +3,7 @@ import { readGlobalWarehouseSettings } from '../utils/read-global-warehouse-sett
 import { readWarehouseKey } from '../utils/read-warehouse-key.util';
 import { readWarehouseSettings } from '../utils/read-warehouse-settings.util';
 import { existsSync, writeFileSync } from 'fs';
+import { getEnv } from 'src/utils/config/get-env';
 
 const NodeRSA = require('node-rsa');
 
@@ -34,7 +35,7 @@ export class WarehouseSettingsModule {
               !existsSync(`/config/${name}/public.key`) &&
               !existsSync(`/config/${name}/private.key`)
             ) {
-              const key = new NodeRSA({ b: 4096 });
+              const key = new NodeRSA({ b: getEnv().rsaKeyBytes });
 
               const publicKey = key.exportKey('public');
               const privateKey = key.exportKey('private');

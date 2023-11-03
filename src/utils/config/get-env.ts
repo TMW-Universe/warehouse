@@ -31,15 +31,18 @@ export const getEnv = (): EnvFile => {
   return {
     databaseUrl: env.DATABASE_URL,
     configPath: env.CONFIG_PATH,
+    rsaKeyBytes: getNumberFromString(env.RSA_KEY_BYTES, 4096),
   };
 };
 
 interface EnvFile {
   databaseUrl: string;
   configPath: string;
+  rsaKeyBytes: number;
 }
 
 class RawEnvFile {
   DATABASE_URL: string;
   CONFIG_PATH: string;
+  RSA_KEY_BYTES: string;
 }
