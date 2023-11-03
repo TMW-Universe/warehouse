@@ -1,6 +1,8 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { addMinutes, isFuture } from 'date-fns';
 import { SignDTO } from 'src/dtos/keys/sign.body';
+import { AccessToken } from 'src/types/token/access-token.type';
+import { SignedToken } from 'src/types/token/signed-token.type';
 import { RsaService } from 'src/warehouse/rsa/rsa.service';
 import {
   WAREHOUSE_SETTINGS_PROVIDER,
@@ -51,9 +53,23 @@ export class KeysService {
 
     const expiresAt = definedExpiresAt ?? addMinutes(new Date(Date.now()), 30);
 
-    return this.rsaService.encryptWithPublicKey(
-      publicKey,
-      JSON.stringify({ warehouse, fileIds, expiresAt }),
-    );
+    const signedToken = JSON.stringify({
+      w: warehouse,
+      st: this.rsaService.encryptWithPublicKey(
+        publicKey,
+        JSON.stringify({
+          expiresAt,
+          fileIds,
+          salt: '',
+        } as SignedToken),
+      ),
+    } as AccessToken);
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(signedToken);
+
+    return Buffer.from(data).toString('base64');
   }
+
+  async decodeAccessToken() {}
 }
