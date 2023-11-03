@@ -11,6 +11,7 @@ import { ApiPermissions } from './utils/types/permissions/api-permissions.enum';
 import { readGlobalWarehouseSettings } from './warehouse/settings/utils/read-global-warehouse-settings.util';
 import { readWarehouseSettings } from './warehouse/settings/utils/read-warehouse-settings.util';
 import { KeysModule } from './api/keys/keys.module';
+import { RsaModule } from './warehouse/rsa/rsa.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { KeysModule } from './api/keys/keys.module';
     }),
     PrismaModule,
     WarehouseSettingsModule.register(),
+    RsaModule,
     WarehouseModule,
     KeysModule,
   ],
