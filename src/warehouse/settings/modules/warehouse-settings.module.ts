@@ -5,6 +5,13 @@ import { readWarehouseSettings } from '../utils/read-warehouse-settings.util';
 
 export const WAREHOUSE_SETTINGS_PROVIDER = 'WAREHOUSE_SETTINGS_PROVIDER';
 
+export type WarehouseSettingsProvider = {
+  warehouse: string;
+  apiKeys: string[];
+  publicKey: string;
+  privateKey: string;
+}[];
+
 @Global()
 @Module({})
 export class WarehouseSettingsModule {
@@ -31,9 +38,10 @@ export class WarehouseSettingsModule {
               publicKey,
               privateKey,
             };
-          }),
+          }) as WarehouseSettingsProvider,
         },
       ],
+      exports: [WAREHOUSE_SETTINGS_PROVIDER],
     };
   }
 }

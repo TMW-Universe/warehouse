@@ -10,6 +10,7 @@ import { readFileSync } from 'fs';
 import { ApiPermissions } from './utils/types/permissions/api-permissions.enum';
 import { readGlobalWarehouseSettings } from './warehouse/settings/utils/read-global-warehouse-settings.util';
 import { readWarehouseSettings } from './warehouse/settings/utils/read-warehouse-settings.util';
+import { KeysModule } from './api/keys/keys.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { readWarehouseSettings } from './warehouse/settings/utils/read-warehouse
     PrismaModule,
     WarehouseSettingsModule.register(),
     WarehouseModule,
+    KeysModule,
   ],
 })
 export class AppModule {}
