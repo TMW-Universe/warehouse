@@ -34,7 +34,7 @@ export class WarehouseSettingsModule {
               !existsSync(`/config/${name}/public.key`) &&
               !existsSync(`/config/${name}/private.key`)
             ) {
-              const key = new NodeRSA({ b: 2048 });
+              const key = new NodeRSA({ b: 4096 });
 
               const publicKey = key.exportKey('public');
               const privateKey = key.exportKey('private');
