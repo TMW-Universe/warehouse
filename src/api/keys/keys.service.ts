@@ -25,13 +25,17 @@ export class KeysService {
     return (await this.getConfigByApiKey(apiKey)).publicKey;
   }
 
-  async verifySignature(apiKey: string, message: string) {
+  async verifySignature(apiKey: string, token: string) {
     try {
       const { privateKey } = await this.getConfigByApiKey(apiKey);
 
+      // Convert from Base64 to string
+      const base64Data = Uint8Array.from(atob(token), (c) => c.charCodeAt(0));
+      const decodedToken = new TextDecoder().decode(base64Data);
+
       const decrypted = this.rsaService.decryptWithPrivateKey(
         privateKey,
-        message,
+        (JSON.parse(decodedToken) as AccessToken).st,
       );
 
       if (!decrypted) throw new BadRequestException();
@@ -44,7 +48,7 @@ export class KeysService {
 
   async signAccessToken(
     apiKey: string,
-    { fileIds, expiresAt: definedExpiresAt }: SignDTO,
+    { fileId, expiresAt: definedExpiresAt }: SignDTO,
   ) {
     const { warehouse, publicKey } = await this.getConfigByApiKey(apiKey);
 
@@ -59,17 +63,25 @@ export class KeysService {
         publicKey,
         JSON.stringify({
           expiresAt,
-          fileIds,
+          fileId,
           salt: '',
         } as SignedToken),
       ),
     } as AccessToken);
 
+    // Convert to Base64
     const encoder = new TextEncoder();
     const data = encoder.encode(signedToken);
 
     return Buffer.from(data).toString('base64');
   }
 
-  async decodeAccessToken() {}
+  async decodeAccessToken(warehouseName: string, token: string) {
+    const { privateKey } = this.warehouseSettings.find(
+      (ws) => ws.warehouse === warehouseName,
+    );
+    return JSON.parse(
+      this.rsaService.decryptWithPrivateKey(privateKey, token),
+    ) as SignedToken;
+  }
 }

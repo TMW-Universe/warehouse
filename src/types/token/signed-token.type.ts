@@ -1,5 +1,5 @@
 export interface SignedToken {
-  fileIds: string[];
+  fileId: string;
   expiresAt: Date;
   salt: string;
 }
