@@ -10,6 +10,7 @@ import {
 import { ApiKeyGuard, HeaderApiKey } from 'nestjs-api-keys';
 import { KeysService } from './keys.service';
 import { VerifyKeyDTO } from 'src/dtos/keys/verify-key.dto';
+import { SignDTO } from 'src/dtos/keys/sign.body';
 
 @UseGuards(ApiKeyGuard({}))
 @Controller('keys')
@@ -25,8 +26,17 @@ export class KeysController {
   @Post('verify')
   async verify(
     @HeaderApiKey() apiKey: string,
-    @Body() { message }: VerifyKeyDTO,
+    @Body() { token }: VerifyKeyDTO,
   ) {
-    return this.keysService.verifySignature(apiKey, message);
+    return this.keysService.verifySignature(apiKey, token);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('sign-token')
+  async signFileAccessToken(
+    @Body() body: SignDTO,
+    @HeaderApiKey() apiKey: string,
+  ) {
+    return await this.keysService.signAccessToken(apiKey, body);
   }
 }

@@ -1,4 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { addMinutes, isFuture } from 'date-fns';
+import { SignDTO } from 'src/dtos/keys/sign.body';
 import { RsaService } from 'src/warehouse/rsa/rsa.service';
 import {
   WAREHOUSE_SETTINGS_PROVIDER,
@@ -31,8 +33,27 @@ export class KeysService {
       );
 
       if (!decrypted) throw new BadRequestException();
+
+      return decrypted;
     } catch (e) {
       throw new BadRequestException();
     }
+  }
+
+  async signAccessToken(
+    apiKey: string,
+    { fileIds, expiresAt: definedExpiresAt }: SignDTO,
+  ) {
+    const { warehouse, publicKey } = await this.getConfigByApiKey(apiKey);
+
+    if (definedExpiresAt && !isFuture(definedExpiresAt))
+      throw new Error('expiresAt must be a future time');
+
+    const expiresAt = definedExpiresAt ?? addMinutes(new Date(Date.now()), 30);
+
+    return this.rsaService.encryptWithPublicKey(
+      publicKey,
+      JSON.stringify({ warehouse, fileIds, expiresAt }),
+    );
   }
 }
