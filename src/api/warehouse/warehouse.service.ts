@@ -2,24 +2,28 @@ import { Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
 import { WarehouseRepository } from 'src/database/repository/warehouse.repository';
 import { KeysService } from '../keys/keys.service';
 import { FilesystemService } from 'src/warehouse/filesystem/filesystem.service';
+import { FileRepository } from 'src/database/repository/file.repository';
+import { FileBlobRepository } from 'src/database/repository/file-blob.repository';
+import { ContainerRepository } from 'src/database/repository/container.repository';
 
 @Injectable()
 export class WarehouseService {
   constructor(
-    private readonly warehouseRepository: WarehouseRepository,
+    private readonly fileRepository: FileRepository,
+    private readonly fileBlobRepository: FileBlobRepository,
     private readonly keysService: KeysService,
     private readonly filesystemService: FilesystemService,
   ) {}
 
   async getFileMetadataById(fileId: string) {
-    return await this.warehouseRepository.findFileMetadataById(fileId);
+    return await this.fileRepository.findFileMetadataById(fileId);
   }
 
   async getFileMetadataByToken(token: string) {
     const { warehouseName, fileId } =
       await this.keysService.decodeAccessToken(token);
     const fileMetadata =
-      await this.warehouseRepository.findFileMetadataByWarehouseNameAndId(
+      await this.fileBlobRepository.findFileMetadataByWarehouseNameAndId(
         warehouseName,
         fileId,
       );

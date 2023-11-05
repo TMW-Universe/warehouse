@@ -20,11 +20,17 @@ import {
   WarehouseSettingsProvider,
 } from '../settings/modules/warehouse-settings.module';
 import { DownloadFileOptions } from 'src/types/warehouse/filesystem/download-file-options.type';
+import { FileRepository } from 'src/database/repository/file.repository';
+import { FileBlobRepository } from 'src/database/repository/file-blob.repository';
+import { ContainerRepository } from 'src/database/repository/container.repository';
 
 @Injectable()
 export class FilesystemService {
   constructor(
     private readonly warehouseRepository: WarehouseRepository,
+    private readonly fileRepository: FileRepository,
+    private readonly fileBlobRepository: FileBlobRepository,
+    private readonly containerRepository: ContainerRepository,
     @Inject(WAREHOUSE_SETTINGS_PROVIDER)
     private readonly warehouseSettings: WarehouseSettingsProvider,
     private readonly prisma: PrismaClient,
@@ -46,7 +52,7 @@ export class FilesystemService {
     // If there is a explicit container
     if (containerName)
       container =
-        await this.warehouseRepository.findContainerByNameAndWarehouseName(
+        await this.containerRepository.findContainerByNameAndWarehouseName(
           containerName,
           warehouseName,
         );
@@ -55,13 +61,13 @@ export class FilesystemService {
       const warehouse =
         await this.warehouseRepository.findWarehouseByName(warehouseName);
       if (warehouse.defaultContainerId)
-        container = await this.warehouseRepository.findContainerById(
+        container = await this.containerRepository.findContainerById(
           warehouse.defaultContainerId,
         );
       // If there isn't default container defined
       else
         container =
-          await this.warehouseRepository.findFirstContainerByWarehouseId(
+          await this.containerRepository.findFirstContainerByWarehouseId(
             warehouse.id,
           );
     }
@@ -107,7 +113,7 @@ export class FilesystemService {
 
     return await this.prisma.$transaction(async (t) => {
       // Create file in the container
-      const { id: fileId } = await this.warehouseRepository.createFile(
+      const { id: fileId } = await this.fileRepository.createFile(
         {
           containerId: container.id,
         },
@@ -115,7 +121,7 @@ export class FilesystemService {
       );
 
       // Create blob
-      const { id: fileBlobId } = await this.warehouseRepository.createFileBlob(
+      const { id: fileBlobId } = await this.fileBlobRepository.createFileBlob(
         {
           ...fileMetadata,
           fileId,
@@ -142,7 +148,7 @@ export class FilesystemService {
     options?: DownloadFileOptions,
   ): Promise<Buffer> => {
     const { File, ...metadata } =
-      await this.warehouseRepository.findLastFileBlobByFileIdAndWarehouseName(
+      await this.fileBlobRepository.findLastFileBlobByFileIdAndWarehouseName(
         fileId,
         warehouseName,
       );
