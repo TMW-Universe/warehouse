@@ -1,8 +1,6 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { WarehouseRepository } from 'src/database/repository/warehouse.repository';
 import { KeysService } from '../keys/keys.service';
-import { AccessToken } from 'src/types/token/access-token.type';
-import { isPast } from 'date-fns';
 
 @Injectable()
 export class WarehouseService {
@@ -15,15 +13,19 @@ export class WarehouseService {
     return await this.warehouseRepository.findFileMetadataById(fileId);
   }
 
-  async readFileByToken(token: string) {
-    const accessToken: AccessToken = JSON.parse(token);
-    const { fileId, expiresAt } = await this.keysService.decodeAccessToken(
-      accessToken.w,
-      accessToken.st,
-    );
+  async getFileMetadataByToken(token: string) {
+    const { warehouseName, fileId } =
+      await this.keysService.decodeAccessToken(token);
+    const fileMetadata =
+      await this.warehouseRepository.findFileMetadataByWarehouseNameAndId(
+        warehouseName,
+        fileId,
+      );
 
-    if (isPast(new Date(expiresAt))) throw new UnauthorizedException();
+    console.log(fileId);
 
-    return await this.getFileMetadataById(fileId); // Must check warehouse name too
+    if (!fileMetadata) throw new NotFoundException();
+
+    return fileMetadata;
   }
 }

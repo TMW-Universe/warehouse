@@ -7,7 +7,10 @@ export class WarehouseController {
   constructor(private readonly warehouseService: WarehouseService) {}
 
   @Get('file')
-  async getFileById(@AccessToken() token: string) {
-    return await this.warehouseService.getFileMetadataById('0');
+  async getFileById(@AccessToken() token: string) {}
+
+  @Get('file/metadata')
+  async getFileMetadataById(@AccessToken() token: string) {
+    return await this.warehouseService.getFileMetadataByToken(token);
   }
 }

@@ -24,4 +24,45 @@ export class WarehouseRepository {
   async findAllWarehouses() {
     return await this.prisma.warehouse.findMany();
   }
+
+  async findFileMetadataByWarehouseNameAndId(
+    warehouseName: string,
+    fileId: string,
+  ) {
+    return await this.prisma.fileBlob.findFirst({
+      where: {
+        File: {
+          id: fileId,
+          Container: {
+            Warehouse: {
+              name: warehouseName,
+            },
+          },
+        },
+      },
+      select: {
+        name: true,
+        id: true,
+        createdAt: true,
+        extension: true,
+        size: true,
+        File: {
+          select: {
+            Container: {
+              select: {
+                Warehouse: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
 }

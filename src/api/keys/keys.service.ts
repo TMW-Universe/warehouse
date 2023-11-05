@@ -77,12 +77,21 @@ export class KeysService {
     return Buffer.from(data).toString('base64');
   }
 
-  async decodeAccessToken(warehouseName: string, token: string) {
+  async decodeAccessToken(token: string) {
+    // Convert from Base64 to string
+    const base64Data = Uint8Array.from(atob(token), (c) => c.charCodeAt(0));
+    const decodedToken = new TextDecoder().decode(base64Data);
+    const { w, st }: AccessToken = JSON.parse(decodedToken);
+
     const { privateKey } = this.warehouseSettings.find(
-      (ws) => ws.warehouse === warehouseName,
+      (ws) => ws.warehouse === w,
     );
-    return JSON.parse(
-      this.rsaService.decryptWithPrivateKey(privateKey, token),
-    ) as SignedToken;
+
+    return {
+      warehouseName: w,
+      ...(JSON.parse(
+        this.rsaService.decryptWithPrivateKey(privateKey, st),
+      ) as SignedToken),
+    };
   }
 }

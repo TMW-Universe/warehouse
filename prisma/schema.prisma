@@ -54,6 +54,6 @@ model Warehouse {
 
   Container Container[] @relation("container")
 
-  DefaultContainer   Container @relation("default-container", fields: [defaultContainerId], references: [id])
-  defaultContainerId String
+  DefaultContainer   Container? @relation("default-container", fields: [defaultContainerId], references: [id])
+  defaultContainerId String?
 }
