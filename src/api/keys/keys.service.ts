@@ -3,6 +3,7 @@ import { addMinutes, isFuture } from 'date-fns';
 import { SignDTO } from 'src/dtos/keys/sign.body';
 import { AccessToken } from 'src/types/token/access-token.type';
 import { SignedToken } from 'src/types/token/signed-token.type';
+import { randomString } from 'src/utils/string/random-string.util';
 import { RsaService } from 'src/warehouse/rsa/rsa.service';
 import {
   WAREHOUSE_SETTINGS_PROVIDER,
@@ -64,7 +65,7 @@ export class KeysService {
         JSON.stringify({
           expiresAt,
           fileId,
-          salt: '',
+          salt: randomString(24),
         } as SignedToken),
       ),
     } as AccessToken);
