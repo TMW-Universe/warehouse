@@ -5,9 +5,9 @@ WORKDIR /app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package*.json ./
+COPY prisma ./prisma/
 
 RUN npm install
-RUN cd ./prisma & npx migrate deploy
 
 # If you are building your code for production
 # RUN npm ci --only=production
@@ -17,6 +17,9 @@ COPY . .
 
 # Build image
 RUN npm run build
+
+# Deploy database
+RUN npm run prisma:migrate:prod
 
 # MIGHT CHANGE DEPENDING ON .ENV CONFIG
 EXPOSE 6001
