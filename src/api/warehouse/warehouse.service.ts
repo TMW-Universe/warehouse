@@ -28,4 +28,8 @@ export class WarehouseService {
 
     return metadata;
   }
+
+  async uploadFileByApiKey(apiKey: string, file: Express.Multer.File) {
+    
+  }
 }
