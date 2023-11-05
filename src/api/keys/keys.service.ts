@@ -94,9 +94,10 @@ export class KeysService {
 
     const decodedToken = JSON.parse(
       this.rsaService.decryptWithPrivateKey(privateKey, st),
-    ) as SignedToken;
+    ) as Omit<SignedToken, 'expiresAt'> & { expiresAt: string };
 
-    if (isPast(decodedToken.expiresAt)) throw new ForbiddenException();
+    if (isPast(new Date(decodedToken.expiresAt)))
+      throw new ForbiddenException();
     return {
       warehouseName: w,
       ...decodedToken,
