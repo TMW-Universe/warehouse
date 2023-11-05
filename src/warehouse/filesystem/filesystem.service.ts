@@ -8,13 +8,7 @@ import { LocalFilesystem } from './local/local.filesystem';
 import { IFilesystem } from 'src/types/warehouse/filesystem/filesystem.interface';
 import { UploadFileOptions } from 'src/types/warehouse/filesystem/upload-file-options.type';
 import { WarehouseRepository } from 'src/database/repository/warehouse.repository';
-import {
-  Container,
-  File,
-  FileBlob,
-  PrismaClient,
-  Warehouse,
-} from '@prisma/client';
+import { Container, File, FileBlob, PrismaClient } from '@prisma/client';
 import {
   WAREHOUSE_SETTINGS_PROVIDER,
   WarehouseSettingsProvider,
