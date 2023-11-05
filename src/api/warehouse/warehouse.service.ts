@@ -24,6 +24,8 @@ export class WarehouseService {
 
     if (!fileMetadata) throw new NotFoundException();
 
-    return fileMetadata;
+    const { File, ...metadata } = fileMetadata;
+
+    return metadata;
   }
 }

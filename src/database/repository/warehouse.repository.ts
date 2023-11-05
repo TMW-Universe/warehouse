@@ -40,21 +40,12 @@ export class WarehouseRepository {
           },
         },
       },
-      select: {
-        name: true,
-        id: true,
-        createdAt: true,
-        extension: true,
-        size: true,
+      include: {
         File: {
-          select: {
+          include: {
             Container: {
-              select: {
-                Warehouse: {
-                  select: {
-                    name: true,
-                  },
-                },
+              include: {
+                Warehouse: true,
               },
             },
           },
