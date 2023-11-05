@@ -3,9 +3,15 @@ import { WarehouseController } from './warehouse.controller';
 import { WarehouseService } from './warehouse.service';
 import { WarehouseRepository } from 'src/database/repository/warehouse.repository';
 import { KeysService } from '../keys/keys.service';
+import { FilesystemService } from 'src/warehouse/filesystem/filesystem.service';
 
 @Module({
   controllers: [WarehouseController],
-  providers: [WarehouseService, WarehouseRepository, KeysService],
+  providers: [
+    WarehouseService,
+    WarehouseRepository,
+    KeysService,
+    FilesystemService,
+  ],
 })
 export class WarehouseModule {}

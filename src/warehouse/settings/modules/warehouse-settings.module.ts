@@ -4,6 +4,7 @@ import { readWarehouseKey } from '../utils/read-warehouse-key.util';
 import { readWarehouseSettings } from '../utils/read-warehouse-settings.util';
 import { existsSync, writeFileSync } from 'fs';
 import { getEnv } from 'src/utils/config/get-env';
+import { FilesystemType } from 'src/types/warehouse/filesystem/filesystem-type.enum';
 
 const NodeRSA = require('node-rsa');
 
@@ -14,6 +15,8 @@ export type WarehouseSettingsProvider = {
   apiKeys: string[];
   publicKey: string;
   privateKey: string;
+  filesystemType: FilesystemType;
+  path: string;
 }[];
 
 @Global()
@@ -27,7 +30,7 @@ export class WarehouseSettingsModule {
       providers: [
         {
           provide: WAREHOUSE_SETTINGS_PROVIDER,
-          useValue: warehouses.map(({ name }) => {
+          useValue: warehouses.map(({ name, filesystemType, path }) => {
             const { apiKeys } = readWarehouseSettings(name);
 
             // Check if keys exist
@@ -62,6 +65,8 @@ export class WarehouseSettingsModule {
               apiKeys,
               publicKey,
               privateKey,
+              filesystemType: filesystemType ?? FilesystemType.LOCAL,
+              path,
             };
           }) as WarehouseSettingsProvider,
         },

@@ -39,13 +39,15 @@ model File {
 
 model Container {
   id   String @id @default(uuid())
-  name String @unique
+  name String
 
   File        File[]
   Warehouse   Warehouse @relation("container", fields: [warehouseId], references: [id])
   warehouseId String
 
   DefaultWarehouse Warehouse[] @relation("default-container")
+
+  @@unique([name, warehouseId], name: "container_name_code")
 }
 
 model Warehouse {
