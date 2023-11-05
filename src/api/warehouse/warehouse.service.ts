@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
 import { WarehouseRepository } from 'src/database/repository/warehouse.repository';
 import { KeysService } from '../keys/keys.service';
 import { FilesystemService } from 'src/warehouse/filesystem/filesystem.service';
@@ -35,5 +35,17 @@ export class WarehouseService {
     const { warehouse } = await this.keysService.getConfigByApiKey(apiKey);
 
     return await this.filesystemService.uploadFile(file, warehouse);
+  }
+
+  async streamFileByToken(token: string) {
+    const { warehouseName, fileId } =
+      await this.keysService.decodeAccessToken(token);
+
+    const fileBuffer = await this.filesystemService.downloadFile(
+      fileId,
+      warehouseName,
+    );
+
+    return new StreamableFile(fileBuffer);
   }
 }

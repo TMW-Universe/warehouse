@@ -10,15 +10,18 @@ import { WarehouseService } from './warehouse.service';
 import { AccessToken } from 'src/decorators/access-token.decorator';
 import { ApiKeyGuard, HeaderApiKey } from 'nestjs-api-keys';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiPermissions } from 'src/utils/types/permissions/api-permissions.enum';
 
 @Controller('warehouse')
 export class WarehouseController {
   constructor(private readonly warehouseService: WarehouseService) {}
 
   @Get('file')
-  async getFileById(@AccessToken() token: string) {}
+  async streamFileById(@AccessToken() token: string) {
+    return await this.warehouseService.streamFileByToken(token);
+  }
 
-  @UseGuards(ApiKeyGuard({}))
+  @UseGuards(ApiKeyGuard({ permissions: [ApiPermissions.UPLOAD_FILE] }))
   @UseInterceptors(FileInterceptor('file'))
   @Post('file')
   async uploadFile(

@@ -32,7 +32,7 @@ import { RsaModule } from './warehouse/rsa/rsa.module';
           return {
             name,
             keys,
-            permissions: [ApiPermissions.READ_FILE],
+            permissions: [ApiPermissions.READ_FILE, ApiPermissions.UPLOAD_FILE],
           };
         }),
       };

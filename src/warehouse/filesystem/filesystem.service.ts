@@ -8,11 +8,18 @@ import { LocalFilesystem } from './local/local.filesystem';
 import { IFilesystem } from 'src/types/warehouse/filesystem/filesystem.interface';
 import { UploadFileOptions } from 'src/types/warehouse/filesystem/upload-file-options.type';
 import { WarehouseRepository } from 'src/database/repository/warehouse.repository';
-import { Container, File, FileBlob, PrismaClient } from '@prisma/client';
+import {
+  Container,
+  File,
+  FileBlob,
+  PrismaClient,
+  Warehouse,
+} from '@prisma/client';
 import {
   WAREHOUSE_SETTINGS_PROVIDER,
   WarehouseSettingsProvider,
 } from '../settings/modules/warehouse-settings.module';
+import { DownloadFileOptions } from 'src/types/warehouse/filesystem/download-file-options.type';
 
 @Injectable()
 export class FilesystemService {
@@ -66,6 +73,7 @@ export class FilesystemService {
   };
 
   private extractFileMetadata = (file: Express.Multer.File) => {
+    console.log(file);
     const hasExtension = file.originalname.includes('.');
     const splitName = file.originalname.split('.');
     const extension = hasExtension ? splitName[splitName.length - 1] : null;
@@ -126,5 +134,28 @@ export class FilesystemService {
 
       return { fileId };
     });
+  };
+
+  public downloadFile = async (
+    fileId: string,
+    warehouseName: string,
+    options?: DownloadFileOptions,
+  ): Promise<Buffer> => {
+    const { File, ...metadata } =
+      await this.warehouseRepository.findLastFileBlobByFileIdAndWarehouseName(
+        fileId,
+        warehouseName,
+      );
+
+    const warehouseSettings = this.warehouseSettings.find(
+      (ws) => ws.warehouse === warehouseName,
+    );
+
+    if (!warehouseSettings) throw new InternalServerErrorException();
+
+    return await this.pick(warehouseSettings.filesystemType).downloadFile(
+      metadata.id,
+      warehouseSettings.path,
+    );
   };
 }

@@ -120,4 +120,34 @@ export class WarehouseRepository {
       data: file,
     });
   }
+
+  async findLastFileBlobByFileIdAndWarehouseName(
+    fileId: string,
+    warehouseName: string,
+    options?: RepositoryOptions,
+  ) {
+    return await (options?.transaction ?? this.prisma).fileBlob.findFirst({
+      where: {
+        File: {
+          id: fileId,
+          Container: {
+            Warehouse: {
+              name: warehouseName,
+            },
+          },
+        },
+      },
+      include: {
+        File: {
+          include: {
+            Container: {
+              include: {
+                Warehouse: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
