@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../client/prisma.service';
+import { File, FileBlob } from '@prisma/client';
+import { RepositoryOptions } from 'src/types/database/repository/repository-options.type';
 
 @Injectable()
 export class WarehouseRepository {
@@ -98,6 +100,24 @@ export class WarehouseRepository {
       orderBy: {
         name: 'desc',
       },
+    });
+  }
+
+  async createFile(
+    file: Omit<File, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
+    options?: RepositoryOptions,
+  ) {
+    return await (options?.transaction ?? this.prisma).file.create({
+      data: file,
+    });
+  }
+
+  async createFileBlob(
+    file: Omit<FileBlob, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>,
+    options?: RepositoryOptions,
+  ) {
+    return await (options?.transaction ?? this.prisma).fileBlob.create({
+      data: file,
     });
   }
 }

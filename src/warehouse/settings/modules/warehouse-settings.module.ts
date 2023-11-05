@@ -30,8 +30,9 @@ export class WarehouseSettingsModule {
       providers: [
         {
           provide: WAREHOUSE_SETTINGS_PROVIDER,
-          useValue: warehouses.map(({ name, filesystemType, path }) => {
-            const { apiKeys } = readWarehouseSettings(name);
+          useValue: warehouses.map(({ name }) => {
+            const { apiKeys, path, filesystemType } =
+              readWarehouseSettings(name);
 
             // Check if keys exist
             if (
