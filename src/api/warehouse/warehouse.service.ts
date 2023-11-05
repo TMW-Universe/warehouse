@@ -34,6 +34,6 @@ export class WarehouseService {
   async uploadFileByApiKey(apiKey: string, file: Express.Multer.File) {
     const { warehouse } = await this.keysService.getConfigByApiKey(apiKey);
 
-    await this.filesystemService.uploadFile(file, warehouse);
+    return await this.filesystemService.uploadFile(file, warehouse);
   }
 }

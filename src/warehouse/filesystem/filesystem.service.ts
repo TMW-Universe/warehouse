@@ -97,7 +97,7 @@ export class FilesystemService {
 
     const fileMetadata = this.extractFileMetadata(file);
 
-    await this.prisma.$transaction(async (t) => {
+    return await this.prisma.$transaction(async (t) => {
       // Create file in the container
       const { id: fileId } = await this.warehouseRepository.createFile(
         {
@@ -123,6 +123,8 @@ export class FilesystemService {
         file.buffer,
         settingsContainer.path,
       );
+
+      return { fileId };
     });
   };
 }
