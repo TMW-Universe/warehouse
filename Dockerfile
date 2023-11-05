@@ -7,6 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm install
+RUN cd ./prisma & npx migrate deploy
 
 # If you are building your code for production
 # RUN npm ci --only=production
