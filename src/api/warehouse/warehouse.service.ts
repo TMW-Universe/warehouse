@@ -22,8 +22,6 @@ export class WarehouseService {
         fileId,
       );
 
-    console.log(fileId);
-
     if (!fileMetadata) throw new NotFoundException();
 
     return fileMetadata;
