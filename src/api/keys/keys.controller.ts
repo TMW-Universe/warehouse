@@ -17,7 +17,7 @@ import { SignDTO } from 'src/dtos/keys/sign.body';
 export class KeysController {
   constructor(private readonly keysService: KeysService) {}
 
-  @Get('key')
+  @Get('public-key')
   async getKey(@HeaderApiKey() apiKey: string) {
     return await this.keysService.getPublicKeyByApiKey(apiKey);
   }
