@@ -12,6 +12,7 @@ import { readGlobalWarehouseSettings } from './warehouse/settings/utils/read-glo
 import { readWarehouseSettings } from './warehouse/settings/utils/read-warehouse-settings.util';
 import { KeysModule } from './api/keys/keys.module';
 import { RsaModule } from './warehouse/rsa/rsa.module';
+import { SetupModule } from './api/setup/setup.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { RsaModule } from './warehouse/rsa/rsa.module';
     RsaModule,
     WarehouseModule,
     KeysModule,
+    SetupModule,
   ],
 })
 export class AppModule {}
