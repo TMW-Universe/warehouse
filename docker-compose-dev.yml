@@ -14,4 +14,4 @@ services:
       - '${CONFIG_PATH}:/config'
       - ./src:/app/src
     expose:
-      - '6000'
+      - '6001'
