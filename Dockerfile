@@ -22,5 +22,5 @@ RUN npm run build
 RUN npm run prisma:migrate:prod
 
 # MIGHT CHANGE DEPENDING ON .ENV CONFIG
-EXPOSE 6001
+EXPOSE 9001
 CMD [ "node", "dist/main.js" ]

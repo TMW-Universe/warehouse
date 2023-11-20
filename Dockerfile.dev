@@ -15,5 +15,5 @@ RUN npm install
 COPY . .
 
 # MIGHT CHANGE DEPENDING ON .ENV CONFIG
-EXPOSE 6001
+EXPOSE 9001
 CMD [ "npm", "run", "start:dev" ]
