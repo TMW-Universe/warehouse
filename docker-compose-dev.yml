@@ -9,9 +9,10 @@ services:
     env_file:
       - .env
     ports:
-      - '9001:9001'
+      - '${PORT}:${PORT}'
     volumes:
       - '${CONFIG_PATH}:/config'
       - ./src:/app/src
+      - ./certificates:/app/certificates
     expose:
-      - '9001'
+      - '${PORT}'

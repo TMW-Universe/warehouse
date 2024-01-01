@@ -1,4 +1,4 @@
-FROM node:20.6.1-alpine3.18
+FROM node:20.10.0-alpine3.18
 WORKDIR /app
 
 # Install app dependencies
@@ -22,5 +22,5 @@ RUN npm run build
 RUN npm run prisma:migrate:prod
 
 # MIGHT CHANGE DEPENDING ON .ENV CONFIG
-EXPOSE 9001
+EXPOSE $PORT
 CMD [ "node", "dist/main.js" ]
